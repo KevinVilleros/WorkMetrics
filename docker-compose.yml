@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: timetracker_db
+    environment:
+      POSTGRES_DB: timetracker_db
+      POSTGRES_USER: timetracker_user
+      POSTGRES_PASSWORD: timetracker_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U timetracker_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Django Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: timetracker_backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "True"
+      DATABASE_URL: postgresql://timetracker_user:timetracker_pass@db:5432/timetracker_db
+      ALLOWED_HOSTS: localhost,127.0.0.1,backend
+      SECRET_KEY: django-insecure-development-key
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - timetracker_network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: timetracker_frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      REACT_APP_API_URL: http://localhost:8000/api
+      REACT_APP_WS_URL: ws://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - timetracker_network
+
+  # Redis (opcional para caché)
+  redis:
+    image: redis:7-alpine
+    container_name: timetracker_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - timetracker_network
+
+  # Nginx (proxy reverso)
+  nginx:
+    image: nginx:alpine
+    container_name: timetracker_nginx
+    volumes:
+      - ./.config/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - timetracker_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  timetracker_network:
+    driver: bridge

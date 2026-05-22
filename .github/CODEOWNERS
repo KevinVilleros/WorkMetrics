@@ -1,0 +1,83 @@
+# Archivo de propietarios de código
+
+# Propietarios por defecto
+* @tu_usuario
+
+# ==================== BACKEND ====================
+
+# Aplicación de usuarios y autenticación
+backend/apps/users/ @backend-team @security-team
+backend/apps/users/models.py @auth-specialist
+backend/apps/users/serializers.py @backend-lead
+
+# Tracking de tiempo
+backend/apps/timetracking/ @backend-team @performance-team
+backend/apps/timetracking/models.py @architecture-team
+
+# Actividades
+backend/apps/activities/ @backend-team
+
+# Reportes
+backend/apps/reports/ @backend-team @analytics-team
+backend/apps/reports/services.py @analytics-specialist
+
+# Analytics
+backend/apps/analytics/ @analytics-team @data-scientist
+
+# Utils y configuración
+backend/utils/ @backend-lead @security-team
+backend/config/ @backend-lead
+backend/requirements.txt @devops-team
+
+# ==================== FRONTEND ====================
+
+# Componentes principales
+frontend/src/components/ @frontend-team @ui-specialist
+frontend/src/components/Dashboard/ @dashboard-specialist
+frontend/src/components/TimeTracker/ @tracking-specialist
+frontend/src/components/Reports/ @reporting-specialist
+
+# Servicios y estado
+frontend/src/services/ @frontend-team
+frontend/src/redux/ @frontend-lead
+
+# Estilos
+frontend/src/styles/ @ui-specialist
+
+# ==================== DEVOPS ====================
+
+# Configuración Docker
+backend/Dockerfile @devops-team
+frontend/Dockerfile @devops-team
+docker-compose.yml @devops-lead
+
+# GitHub Actions
+.github/workflows/ @devops-team @ci-cd-specialist
+
+# Configuración
+.config/ @devops-team
+.github/dependabot.yml @devops-team
+
+# ==================== DOCUMENTACIÓN ====================
+
+# Documentación principal
+README.md @tech-lead
+ARQUITECTURA.md @tech-lead
+ESPECIFICACIONES.md @product-owner @tech-lead
+
+# Documentación técnica
+docs/ @tech-lead
+SECURITY.md @security-team
+CONTRIBUTING.md @tech-lead
+CODE_OF_CONDUCT.md @tech-lead
+
+# ==================== CONFIGURACIÓN ====================
+
+# Git
+.gitignore @tech-lead
+.gitattributes @tech-lead
+.gitmessage @tech-lead
+
+# Gobierno
+CHANGELOG.md @tech-lead
+GITHUB_SETUP.md @tech-lead

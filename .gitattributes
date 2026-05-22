@@ -1,0 +1,43 @@
+# Configuración de atributos Git
+
+# Auto-detección de texto/binario
+* text=auto
+
+# Archivos de código
+*.py text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.sql text eol=lf
+*.sh text eol=lf
+
+# Archivos de documentación
+*.md diff=markdown
+
+# Archivos binarios
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.gz binary
+*.zip binary
+*.7z binary
+*.ttf binary
+*.otf binary
+
+# Archivos de base de datos
+*.db binary
+*.sqlite binary
+*.sqlite3 binary
+
+# Diferencias de merge
+*.psd diff=exif

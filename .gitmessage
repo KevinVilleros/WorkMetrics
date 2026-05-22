@@ -1,0 +1,31 @@
+# Mensaje de commit template
+
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# Tipos de commit:
+# - feat: Una nueva funcionalidad
+# - fix: Una corrección de bug
+# - docs: Cambios en documentación
+# - style: Cambios de formato (espacios, etc)
+# - refactor: Refactorización de código
+# - perf: Mejoras de performance
+# - test: Agregar o actualizar tests
+# - chore: Cambios en build, CI/CD, dependencias
+# - ci: Cambios en archivos CI/CD
+#
+# Scope: Componente afectado (users, timetracking, etc)
+# Subject: Descripción corta (imperativo, no mayúscula, sin punto)
+# Body: Explicación detallada de qué y por qué (no cómo)
+# Footer: Referencias a issues (Closes #123, Fixes #456)
+#
+# Ejemplo:
+# feat(tracking): agregar pausa manual de sesión
+#
+# Permite pausar y reanudar tracking sin cerrar la sesión.
+# Implementa validaciones para evitar pausas innecesarias.
+#
+# Closes #123

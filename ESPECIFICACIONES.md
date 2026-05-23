@@ -425,7 +425,7 @@
 
 
 
-# 📋 Especificaciones Técnicas
+#  Especificaciones Técnicas
 
 ## Versión 1.0 - MVP
 

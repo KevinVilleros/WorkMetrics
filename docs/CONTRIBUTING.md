@@ -1,4 +1,4 @@
-# 🤝 Guía de Contribución
+#  Guía de Contribución
 
 ## Bienvenida
 
@@ -280,6 +280,6 @@ Todos los contribuyentes serán reconocidos en:
 
 ---
 
-¡Gracias por contribuir! 🙌
+¡Gracias por contribuir! 
 
 **Última Actualización**: 21 de Mayo de 2026

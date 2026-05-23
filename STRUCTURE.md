@@ -1,9 +1,9 @@
-# 📁 Estructura Completa del Proyecto
+#  Estructura Completa del Proyecto
 
 ```
 Sec-0,1-bet/
 │
-├── 📚 DOCUMENTACIÓN RAÍZ
+├──  DOCUMENTACIÓN RAÍZ
 │   ├── README.md                 # Descripción general del proyecto
 │   ├── ARQUITECTURA.md           # Diseño del sistema
 │   ├── ESPECIFICACIONES.md       # Requerimientos técnicos
@@ -11,7 +11,7 @@ Sec-0,1-bet/
 │   ├── .gitignore                # Configuración de Git
 │   └── setup.sh                  # Script de inicialización
 │
-├── 📂 docs/                      # Documentación del proyecto
+├──  docs/                      # Documentación del proyecto
 │   ├── API.md                    # Documentación de endpoints
 │   ├── DATABASE.md               # Configuración de BD
 │   ├── DESARROLLO.md             # Guía de desarrollo local
@@ -20,10 +20,10 @@ Sec-0,1-bet/
 │   ├── ROADMAP.md                # Plan de desarrollo
 │   └── ISSUE_TEMPLATE.md         # Plantilla para issues
 │
-├── ⚙️ .config/                   # Configuración
+├── ️ .config/                   # Configuración
 │   └── nginx.conf                # Configuración de Nginx
 │
-├── 🐍 backend/                   # API REST (Django)
+├──  backend/                   # API REST (Django)
 │   ├── config/                   # Configuración Django
 │   │   ├── __init__.py
 │   │   ├── settings.py           # Settings de Django
@@ -91,7 +91,7 @@ Sec-0,1-bet/
 │   ├── setup_apps.sh              # Script para crear apps
 │   └── pytest.ini                 # Configuración pytest
 │
-├── ⚛️ frontend/                  # Cliente React
+├── ️ frontend/                  # Cliente React
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Dashboard/         # Componente Dashboard
@@ -162,7 +162,7 @@ Sec-0,1-bet/
 │   ├── .prettierrc                # Prettier config
 │   └── DEPENDENCIES.md            # Lista de dependencias
 │
-└── 🗂️ logs/                       # Directorio de logs
+└── ️ logs/                       # Directorio de logs
     └── (generado en runtime)
 
 ```

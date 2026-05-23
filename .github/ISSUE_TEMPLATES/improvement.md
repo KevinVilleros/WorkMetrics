@@ -1,20 +1,20 @@
 ---
-name: 📈 Mejora
+name:  Mejora
 about: Sugerir una mejora en funcionalidad o performance
 title: "[IMPROVEMENT] Descripción breve"
 labels: improvement
 assignees: ''
 ---
 
-## 📝 Descripción
+##  Descripción
 
 Describir qué podría mejorarse y por qué.
 
-## 🎯 Beneficios
+##  Beneficios
 
 ¿Cuáles serían los beneficios de esta mejora?
 
-## 💻 Área Afectada
+##  Área Afectada
 
 - [ ] Backend
 - [ ] Frontend
@@ -24,10 +24,10 @@ Describir qué podría mejorarse y por qué.
 - [ ] DevOps
 - [ ] Otro
 
-## 📊 Impacto Estimado
+##  Impacto Estimado
 
 Describe el impacto esperado (performance, UX, mantenibilidad, etc.)
 
-## 🔍 Cambios Propuestos
+##  Cambios Propuestos
 
 Describe los cambios específicos propuestos para lograr esta mejora.

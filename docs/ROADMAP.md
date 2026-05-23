@@ -1,4 +1,4 @@
-# 📊 Plan de Implementación
+#  Plan de Implementación
 
 ## Fase 1: MVP (Semana 1-4)
 

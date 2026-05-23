@@ -1,4 +1,4 @@
-# 🏗️ Arquitectura del Sistema
+# ️ Arquitectura del Sistema
 
 ## Visión General
 
@@ -34,7 +34,7 @@ Sistema de arquitectura de 3 capas con API REST, implementando patrones de desar
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 🗂️ Estructura de Carpetas
+## ️ Estructura de Carpetas
 
 ### Backend
 
@@ -133,7 +133,7 @@ frontend/
 └── README.md
 ```
 
-## 📊 Modelo de Datos
+##  Modelo de Datos
 
 ### Entidades Principales
 
@@ -188,7 +188,7 @@ Report
 └── generated_at
 ```
 
-## 🔄 Flujo de Datos
+##  Flujo de Datos
 
 ### Timeline del Tracking
 
@@ -212,7 +212,7 @@ Report
 9. Backend calcula eficiencia y genera reporte
 ```
 
-## 🔐 Seguridad
+##  Seguridad
 
 ### Autenticación
 - JWT tokens con refresh tokens
@@ -229,7 +229,7 @@ Report
 - Validación frontend
 - Rate limiting por IP/usuario
 
-## 🚀 API Endpoints Principales
+##  API Endpoints Principales
 
 ```
 AUTH
@@ -266,7 +266,7 @@ PUT    /api/users/:id               - Actualizar usuario
 DELETE /api/users/:id               - Eliminar usuario
 ```
 
-## 🔄 Ciclo de Despliegue
+##  Ciclo de Despliegue
 
 ```
 Development → Staging → Production

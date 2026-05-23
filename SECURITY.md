@@ -1,8 +1,8 @@
-# 🔐 Política de Seguridad
+#  Política de Seguridad
 
 ## Reportar Vulnerabilidades
 
-**⚠️ NO abras un issue público para reportar vulnerabilidades de seguridad.**
+**️ NO abras un issue público para reportar vulnerabilidades de seguridad.**
 
 Si descubres una vulnerabilidad de seguridad, por favor envía un email a:
 ```
@@ -28,9 +28,9 @@ Con la siguiente información:
 
 | Versión | Soportada | Fecha de Fin |
 |---------|-----------|------------|
-| 1.0.x   | ✅        | 2027-05-21 |
+| 1.0.x   |         | 2027-05-21 |
 | 0.9.x   | ⏳        | 2026-11-21 |
-| < 0.9   | ❌        | Fin de vida |
+| < 0.9   |         | Fin de vida |
 
 ## Mejores Prácticas de Seguridad
 
@@ -91,10 +91,10 @@ Con la siguiente información:
 
 ## Compliance
 
-- ✅ OWASP Top 10
-- ✅ GDPR
-- ✅ SOC 2 Type II (en progreso)
-- ✅ ISO 27001 (en progreso)
+-  OWASP Top 10
+-  GDPR
+-  SOC 2 Type II (en progreso)
+-  ISO 27001 (en progreso)
 
 ## Changelog de Seguridad
 
@@ -109,4 +109,4 @@ Con la siguiente información:
 
 **Última Actualización**: 21 de Mayo de 2026
 
-Gracias por ayudarnos a mantener nuestro proyecto seguro. 🛡️
+Gracias por ayudarnos a mantener nuestro proyecto seguro. ️

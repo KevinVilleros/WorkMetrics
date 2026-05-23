@@ -1,19 +1,19 @@
-# 📊 Sistema de Monitoreo de Eficiencia Laboral
+#  Sistema de Monitoreo de Eficiencia Laboral
 
 ## Descripción General
 
 Sistema profesional para medir, monitorear y analizar las horas laborales de empleados, permitiendo evaluar su eficiencia, tiempo productivo/improductivo y otros factores críticos que impactan el desempeño organizacional.
 
-## 🎯 Objetivos Principales
+##  Objetivos Principales
 
-- ✅ Tracking de tiempo en tiempo real
-- ✅ Registro automático de actividades
-- ✅ Análisis de eficiencia laboral
-- ✅ Identificación de tiempo perdido
-- ✅ Generación de reportes detallados
-- ✅ Dashboard de gestión ejecutiva
+-  Tracking de tiempo en tiempo real
+-  Registro automático de actividades
+-  Análisis de eficiencia laboral
+-  Identificación de tiempo perdido
+-  Generación de reportes detallados
+-  Dashboard de gestión ejecutiva
 
-## 🏗️ Estructura del Proyecto
+## ️ Estructura del Proyecto
 
 ```
 ├── backend/                 # API REST (Django)
@@ -27,7 +27,7 @@ Sistema profesional para medir, monitorear y analizar las horas laborales de emp
 └── docker-compose.yml       # Orquestación de servicios
 ```
 
-## 🛠️ Stack Tecnológico
+## ️ Stack Tecnológico
 
 ### Backend
 - **Framework**: Django 4.x + Django REST Framework
@@ -47,7 +47,7 @@ Sistema profesional para medir, monitorear y analizar las horas laborales de emp
 - **Orquestación**: Docker Compose
 - **Control de Versiones**: Git/GitHub
 
-## 📋 Requerimientos Previos
+##  Requerimientos Previos
 
 - Python 3.10+
 - Node.js 16+ y npm
@@ -55,7 +55,7 @@ Sistema profesional para medir, monitorear y analizar las horas laborales de emp
 - Docker y Docker Compose
 - Git
 
-## 🚀 Inicio Rápido
+##  Inicio Rápido
 
 ### 1. Clonar Repositorio
 ```bash
@@ -85,14 +85,14 @@ npm start
 docker-compose up -d
 ```
 
-## 📚 Documentación
+##  Documentación
 
 - [Arquitectura del Sistema](./ARQUITECTURA.md)
 - [Especificaciones Técnicas](./ESPECIFICACIONES.md)
 - [Guía de Desarrollo](./docs/DESARROLLO.md)
 - [API Documentation](./docs/API.md)
 
-## 🔐 Seguridad
+##  Seguridad
 
 - Autenticación con JWT
 - Encriptación de contraseñas con bcrypt
@@ -100,7 +100,7 @@ docker-compose up -d
 - Rate limiting implementado
 - Validación de entrada en todos los endpoints
 
-## 📊 Métricas Clave
+##  Métricas Clave
 
 - **Horas Productivas**: Tiempo activamente trabajando
 - **Tiempo Inactivo**: Períodos sin actividad registrada
@@ -108,13 +108,13 @@ docker-compose up -d
 - **Análisis de Pausas**: Duración y frecuencia de descansos
 - **Tiempo por Proyecto**: Distribución de horas por tarea
 
-## 👥 Roles de Usuario
+##  Roles de Usuario
 
 - **Admin**: Acceso total al sistema
 - **Gerente**: Visualizar reportes, gestionar empleados
 - **Empleado**: Trackear tiempo, ver su propio desempeño
 
-## 📈 Roadmap
+##  Roadmap
 
 - [ ] v1.0: MVP con tracking básico
 - [ ] v1.1: Reportes avanzados
@@ -122,15 +122,15 @@ docker-compose up -d
 - [ ] v2.0: Analítica avanzada
 - [ ] v2.1: Integraciones con herramientas externas
 
-## 🤝 Contribución
+##  Contribución
 
 Ver [CONTRIBUTING.md](./docs/CONTRIBUTING.md) para detalles.
 
-## 📄 Licencia
+##  Licencia
 
 Proyecto propietario - Derechos reservados
 
-## 📧 Contacto
+##  Contacto
 
 Para preguntas o sugerencias, contactar al equipo de desarrollo.
 

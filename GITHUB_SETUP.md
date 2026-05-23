@@ -1,4 +1,4 @@
-# 🚀 Guía: Configurar Repositorio Privado en GitHub
+#  Guía: Configurar Repositorio Privado en GitHub
 
 ## Paso 1: Inicializar Git Local
 
@@ -34,7 +34,7 @@ git commit -m "chore: proyecto inicial - estructura profesional completa
 2. Llenar los detalles:
    - **Repository name**: `Sec-0,1-bet` (o el nombre que prefieras)
    - **Description**: "Sistema profesional de monitoreo de eficiencia laboral"
-   - **Visibility**: ⚫ **Private** (IMPORTANTE)
+   - **Visibility**:  **Private** (IMPORTANTE)
    - **Initialize this repository**: NO (dejar sin marcar)
    - Click **Create repository**
 
@@ -61,31 +61,31 @@ En GitHub, ve a **Settings → Branches → Add rule**
 ### Rama: `main`
 
 ```
-- Require a pull request before merging: ✅
-- Require status checks to pass before merging: ✅
-  - Require branches to be up to date before merging: ✅
-  - Require status checks to pass: ✅
+- Require a pull request before merging: 
+- Require status checks to pass before merging: 
+  - Require branches to be up to date before merging: 
+  - Require status checks to pass: 
     - Backend Tests
     - Frontend Tests
     - Security Checks
-- Dismiss stale pull request approvals: ✅
-- Require code reviews before merging: ✅
-  - Require review from Code Owners: ✅
-  - Require 2 pull request reviews: ✅
-  - Require reviews from pull request authors: ✅
-- Require up-to-date branches: ✅
-- Require conversation resolution before merging: ✅
+- Dismiss stale pull request approvals: 
+- Require code reviews before merging: 
+  - Require review from Code Owners: 
+  - Require 2 pull request reviews: 
+  - Require reviews from pull request authors: 
+- Require up-to-date branches: 
+- Require conversation resolution before merging: 
 - Require deployments to succeed: ⬜ (opcional)
 ```
 
 ### Rama: `develop`
 
 ```
-- Require a pull request before merging: ✅
-- Require status checks to pass before merging: ✅
-- Dismiss stale pull request approvals: ✅
-- Require code reviews before merging: ✅
-  - Require 1 pull request review: ✅
+- Require a pull request before merging: 
+- Require status checks to pass before merging: 
+- Dismiss stale pull request approvals: 
+- Require code reviews before merging: 
+  - Require 1 pull request review: 
 ```
 
 ## Paso 5: Configurar Secretos (GitHub Actions)
@@ -113,11 +113,11 @@ DEPLOY_WEBHOOK_SECRET=webhook_secret
 **Settings → Access → Collaborators and teams → Add people**
 
 Agrega a tus colaboradores:
-- ✅ Admin: Acceso total
-- 📝 Maintain: Gestionar sin eliminar repo
-- 🔧 Write: Hacer push y PR
-- 📖 Triage: Crear issues y PR
-- 👀 Read: Solo lectura
+-  Admin: Acceso total
+-  Maintain: Gestionar sin eliminar repo
+-  Write: Hacer push y PR
+-  Triage: Crear issues y PR
+-  Read: Solo lectura
 
 ## Paso 7: Configurar Project Board (Opcional)
 
@@ -131,12 +131,12 @@ Agrega a tus colaboradores:
 
 Columnas propuestas:
 ```
-- 📋 Backlog
-- 🎯 Sprint Planning
+-  Backlog
+-  Sprint Planning
 - ⏳ In Progress
-- 🔍 Code Review
-- ✅ Done
-- 🐛 Bugs
+-  Code Review
+-  Done
+-  Bugs
 ```
 
 ## Paso 8: Configurar Ruleset (Opcional - GitHub Pro+)
@@ -148,12 +148,12 @@ Columnas propuestas:
 - Enforcement: Active
 - Target branches: main
 - Rules:
-  ✅ Require pull request reviews (2)
-  ✅ Dismiss stale approvals
-  ✅ Require status checks
-  ✅ Require branches to be up to date
-  ✅ Block force pushes
-  ✅ Block deletions
+   Require pull request reviews (2)
+   Dismiss stale approvals
+   Require status checks
+   Require branches to be up to date
+   Block force pushes
+   Block deletions
 ```
 
 ## Paso 9: Habilitar Features Avanzados
@@ -161,13 +161,13 @@ Columnas propuestas:
 **Settings → Code security and analysis**
 
 Habilitar:
-- ✅ Dependabot alerts
-- ✅ Dependabot security updates
-- ✅ Dependabot version updates (ya configurado)
-- ✅ Private vulnerability reporting
-- ✅ Code scanning (si tienes Advanced Security)
-- ✅ Secret scanning
-- ✅ Push protection
+-  Dependabot alerts
+-  Dependabot security updates
+-  Dependabot version updates (ya configurado)
+-  Private vulnerability reporting
+-  Code scanning (si tienes Advanced Security)
+-  Secret scanning
+-  Push protection
 
 ## Paso 10: Crear Rama de Desarrollo
 
@@ -207,7 +207,7 @@ README.md @tech_lead
 
 **Settings → Security → Secret scanning**
 
-- ✅ Push protection for custom patterns
+-  Push protection for custom patterns
 - Agregar patrones para detectar:
   - Private keys
   - API keys
@@ -240,7 +240,7 @@ Events:
 
 ---
 
-## ✅ Checklist Final
+##  Checklist Final
 
 - [ ] Repositorio creado y privado
 - [ ] Código hecho push a main
@@ -257,22 +257,22 @@ Events:
 
 ---
 
-## 🔐 Seguridad: Lista de Verificación
+##  Seguridad: Lista de Verificación
 
-- [ ] Repositorio: PRIVATE ✅
-- [ ] No incluir .env en git ✅
-- [ ] .gitignore completo ✅
-- [ ] Ramas protegidas ✅
-- [ ] 2 reviewers requeridos ✅
-- [ ] Status checks requeridos ✅
-- [ ] SECURITY.md presente ✅
-- [ ] CODE_OF_CONDUCT.md presente ✅
-- [ ] Secret scanning activo ✅
-- [ ] Dependabot updates activo ✅
+- [ ] Repositorio: PRIVATE 
+- [ ] No incluir .env en git 
+- [ ] .gitignore completo 
+- [ ] Ramas protegidas 
+- [ ] 2 reviewers requeridos 
+- [ ] Status checks requeridos 
+- [ ] SECURITY.md presente 
+- [ ] CODE_OF_CONDUCT.md presente 
+- [ ] Secret scanning activo 
+- [ ] Dependabot updates activo 
 
 ---
 
-## 📚 Comandos Útiles de Git
+##  Comandos Útiles de Git
 
 ```bash
 # Ver estado
@@ -331,4 +331,4 @@ cat ~/.ssh/id_ed25519.pub
 
 **Configuración Completada**: 21 de Mayo de 2026
 
-¡Tu repositorio GitHub profesional y privado está listo! 🎉
+¡Tu repositorio GitHub profesional y privado está listo! 

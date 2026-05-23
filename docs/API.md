@@ -19,7 +19,7 @@ Content-Type: application/json
 
 ## Endpoints
 
-### 🔐 Authentication
+###  Authentication
 
 #### Login
 ```
@@ -183,7 +183,7 @@ Response: 200 OK
 }
 ```
 
-### 📊 Reports
+###  Reports
 
 #### Reporte Diario
 ```
@@ -288,7 +288,7 @@ Response: 200 OK
 }
 ```
 
-### 📈 Analytics
+###  Analytics
 
 #### Eficiencia General
 ```
@@ -334,7 +334,7 @@ Response: 200 OK
 }
 ```
 
-### 👥 Users (Admin/Manager)
+###  Users (Admin/Manager)
 
 #### Listar Usuarios
 ```

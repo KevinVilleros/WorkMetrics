@@ -87,6 +87,7 @@ docker-compose up -d
 
 ##  Documentación
 
+- [Documento de Proyecto](./docs/PROJECT_DOCUMENTATION.md)
 - [Arquitectura del Sistema](./ARQUITECTURA.md)
 - [Especificaciones Técnicas](./ESPECIFICACIONES.md)
 - [Guía de Desarrollo](./docs/DESARROLLO.md)

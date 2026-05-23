@@ -32,7 +32,7 @@
 - [ ] Análisis de tendencias
 - [ ] Comparativas por período
 - [ ] Alertas de bajo desempeño
-- [ ] Machine learning básico
+- [ ] Analítica avanzada de patrones
 
 ### Sprint 6: Mobile Responsive
 - [ ] Responsive design completo
@@ -62,7 +62,7 @@
 ## Roadmap Futuro
 
 - [ ] App móvil nativa (iOS/Android)
-- [ ] IA para análisis predictivo
+- [ ] Analítica avanzada para tendencias
 - [ ] Gamification de productividad
 - [ ] Integración con herramientas de trabajo
 - [ ] White-label solution

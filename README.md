@@ -119,7 +119,7 @@ docker-compose up -d
 - [ ] v1.0: MVP con tracking básico
 - [ ] v1.1: Reportes avanzados
 - [ ] v1.2: Mobile app nativa
-- [ ] v2.0: IA para análisis predictivo
+- [ ] v2.0: Analítica avanzada
 - [ ] v2.1: Integraciones con herramientas externas
 
 ## 🤝 Contribución

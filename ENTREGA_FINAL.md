@@ -474,8 +474,7 @@ bash initialize-git.sh
 ---
 
 **Entregado**: 21 de Mayo de 2026  
-**Por**: Sistema de IA  
-**Para**: Sistema de Monitoreo de Eficiencia Laboral  
+**Por**: Equipo de Desarrollo  
 **Tipo**: GitHub Profesional Privado  
 **Versión**: 1.0  
 

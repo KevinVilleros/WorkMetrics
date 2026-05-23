@@ -46,7 +46,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 
 #### Planned
 - [ ] Análisis de tendencias avanzado
-- [ ] Machine Learning básico para predicciones
+- [ ] Analítica avanzada para predicciones
 - [ ] Notificaciones en tiempo real
 - [ ] Integración con Slack
 - [ ] Integración con Google Calendar

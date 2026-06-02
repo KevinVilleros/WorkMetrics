@@ -27,7 +27,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>Sec-0,1-bet</h1>
+        <h1>MetricLab</h1>
         <p>Sistema de Monitoreo de Eficiencia Laboral</p>
       </header>
 

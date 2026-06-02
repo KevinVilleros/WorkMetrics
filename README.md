@@ -1,8 +1,10 @@
-#  Sistema de Monitoreo de Eficiencia Laboral
+# MetricLab
 
-## Descripción General
+## Sistema de Monitoreo de Eficiencia Laboral
 
-Sistema profesional para medir, monitorear y analizar las horas laborales de empleados, permitiendo evaluar su eficiencia, tiempo productivo/improductivo y otros factores críticos que impactan el desempeño organizacional.
+### Descripción General
+
+MetricLab es una plataforma profesional para medir, monitorear y analizar las horas laborales de empleados, permitiendo evaluar su eficiencia, tiempo productivo/improductivo y otros factores críticos que impactan el desempeño organizacional.
 
 ##  Objetivos Principales
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import PersonDetector from './components/PersonDetector';
 
 function App() {
   const [status, setStatus] = useState(null);
@@ -41,6 +42,10 @@ function App() {
             <p>Estado: {status.status}</p>
           </div>
         )}
+      </section>
+
+      <section className="detection-section">
+        <PersonDetector />
       </section>
     </div>
   );

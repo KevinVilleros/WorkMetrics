@@ -1,0 +1,43 @@
+.app-container {
+  width: 100%;
+  max-width: 700px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 18px 60px rgba(0,0,0,0.08);
+  padding: 32px;
+}
+
+.app-header {
+  text-align: center;
+}
+
+.app-header h1 {
+  margin: 0 0 12px;
+}
+
+.app-header p {
+  margin: 0;
+  color: #555;
+}
+
+.status-card {
+  margin-top: 32px;
+  padding: 24px;
+  background: #f4f7ff;
+  border: 1px solid #d7e0ff;
+  border-radius: 14px;
+}
+
+.status-card h2 {
+  margin: 0 0 12px;
+  color: #1f3a8a;
+}
+
+.status-card p {
+  margin: 0 0 8px;
+  color: #333;
+}
+
+.error {
+  color: #b91c1c;
+}

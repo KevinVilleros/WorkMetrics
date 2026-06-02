@@ -1,10 +1,13 @@
 #!/bin/bash
 # Script de Configuración Inicial del Backend
 
+cd "$(dirname "$0")" || exit 1
+
 echo "🚀 Configurando Backend Django..."
 
 # Crear estructura de aplicaciones
 mkdir -p apps/{users,timetracking,activities,reports,analytics}
+mkdir -p apps/{users,timetracking,activities,reports,analytics}/migrations
 mkdir -p config
 mkdir -p utils
 mkdir -p migrations

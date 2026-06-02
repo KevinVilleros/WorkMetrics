@@ -1,6 +1,8 @@
 #!/bin/bash
 # Script de Configuración Inicial del Frontend
 
+cd "$(dirname "$0")" || exit 1
+
 echo "🎨 Configurando Frontend React..."
 
 # Crear estructura de directorios

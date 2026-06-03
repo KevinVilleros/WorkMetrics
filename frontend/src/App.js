@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import PersonDetector from './components/PersonDetector';
+import ReportView from './components/Reports/ReportView';
 
 function App() {
   const [status, setStatus] = useState(null);
@@ -28,25 +29,40 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1>MetricLab</h1>
-        <p>Sistema de Monitoreo de Eficiencia Laboral</p>
+        <div>
+          <h1>MetricLab</h1>
+          <p>Monitoreo en tiempo real para verificar si el trabajador está atendiendo y cumpliendo sus tareas.</p>
+        </div>
+        <div className="app-badges">
+          <span className="badge">Visión por cámara</span>
+          <span className="badge">Reporte de cumplimiento</span>
+          <span className="badge">Análisis de atención</span>
+        </div>
       </header>
 
-      <section className="status-card">
+      <section className="status-card section-card">
         {loading && <p>Cargando estado del servidor...</p>}
         {error && <p className="error">No se pudo conectar: {error}</p>}
         {status && (
-          <div>
-            <h2>API conectada</h2>
-            <p>{status.message}</p>
-            <p>Estado: {status.status}</p>
+          <div className="status-grid">
+            <div>
+              <h2>API conectada</h2>
+              <p>{status.message}</p>
+            </div>
+            <div className="status-pill">Estado: {status.status}</div>
           </div>
         )}
       </section>
 
-      <section className="detection-section">
-        <PersonDetector />
-      </section>
+      <div className="dashboard-grid">
+        <section className="section-card">
+          <PersonDetector />
+        </section>
+
+        <section className="section-card">
+          <ReportView />
+        </section>
+      </div>
     </div>
   );
 }

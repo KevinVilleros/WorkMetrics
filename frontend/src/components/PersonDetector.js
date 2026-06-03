@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
+import { saveAttentionEvent } from '../services/reportService';
 import './PersonDetector.css';
 
 const PersonDetector = () => {
@@ -11,7 +12,6 @@ const PersonDetector = () => {
   const [error, setError] = useState(null);
   const [stream, setStream] = useState(null);
 
-  // Inicializar cámara
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -27,7 +27,6 @@ const PersonDetector = () => {
     }
   };
 
-  // Detener cámara
   const stopCamera = () => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -36,7 +35,6 @@ const PersonDetector = () => {
     }
   };
 
-  // Capturar frame y enviar al backend
   const captureFrame = async () => {
     if (!videoRef.current || !canvasRef.current) return;
 
@@ -44,14 +42,10 @@ const PersonDetector = () => {
     const video = videoRef.current;
     const ctx = canvas.getContext('2d');
 
-    // Ajustar dimensiones del canvas
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
-    // Dibujar video en canvas
     ctx.drawImage(video, 0, 0);
-
-    // Convertir a base64
     const imageData = canvas.toDataURL('image/jpeg', 0.8);
 
     setLoading(true);
@@ -59,17 +53,25 @@ const PersonDetector = () => {
       const response = await axios.post('http://localhost:8000/api/detect/', {
         image: imageData
       });
-      setDetectionResult(response.data);
+      const result = response.data;
+      setDetectionResult(result);
       setError(null);
+
+      await saveAttentionEvent({
+        person_detected: result.person_detected,
+        head_orientation: result.head_orientation,
+        distracted: result.distracted,
+        eyes_detected: result.eyes_detected,
+        message: result.message,
+      });
     } catch (err) {
-      setError('Error en la detección');
+      setError('Error en la detección del backend');
       console.error('Error:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  // Capturar automáticamente cada 1.5 segundos
   useEffect(() => {
     if (!isDetecting) return;
 
@@ -118,17 +120,26 @@ const PersonDetector = () => {
               {detectionResult.person_detected ? '✅ Sí' : '❌ No'}
             </p>
             <p>
-              <strong>Puntos clave:</strong> {detectionResult.landmarks.length}
+              <strong>Orientación de cabeza:</strong>{' '}
+              {detectionResult.head_orientation}
+            </p>
+            <p>
+              <strong>Estado de atención:</strong>{' '}
+              {detectionResult.distracted ? '🟠 Distraída / mirando a otro lado' : '🟢 Atenta'}
+            </p>
+            <p>
+              <strong>Ojos detectados:</strong>{' '}
+              {detectionResult.eyes_detected}
             </p>
             <p className="message">{detectionResult.message}</p>
-            
+
             {detectionResult.person_detected && (
               <div className="landmarks">
                 <h4>Puntos detectados:</h4>
                 <ul>
                   {detectionResult.landmarks.slice(0, 5).map((lm, i) => (
                     <li key={i}>
-                      Punto {i + 1}: ({lm.x.toFixed(2)}, {lm.y.toFixed(2)}) - Visibilidad: {(lm.visibility * 100).toFixed(0)}%
+                      Punto {i + 1}: ({lm.x.toFixed(3)}, {lm.y.toFixed(3)})
                     </li>
                   ))}
                   {detectionResult.landmarks.length > 5 && (

@@ -326,7 +326,10 @@ def home(request):
 
 @api_view(['POST'])
 def detect_person(request):
-    """Detecta personas en una imagen enviada como base64"""
+    """
+    Detecta personas en una imagen enviada como base64
+    Ahora soporta múltiples detecciones y retorna un array
+    """
     try:
         # Obtener imagen base64
         image_data = request.data.get('image')
@@ -349,17 +352,74 @@ def detect_person(request):
             image_array = cv2.cvtColor(image_array, cv2.COLOR_RGBA2RGB)
         
         h, w = image_array.shape[:2]
-        faces = []
+        detected_people = []
+        
+        # Intentar detección con MediaPipe primero
         if MEDIAPIPE_AVAILABLE:
-            faces = _detect_faces_mediapipe(image_array)
-
-        if not faces:
+            mp_faces = _detect_faces_mediapipe(image_array)
+            for face_data in mp_faces:
+                x, y, fw, fh = face_data['face_box']
+                
+                # Procesar con malla si está disponible
+                if face_data.get('landmarks'):
+                    landmarks = []
+                    eye_centers = []
+                    for idx in (33, 263):
+                        lm = face_data['landmarks'][idx]
+                        eye_centers.append((lm.x * w, lm.y * h))
+                    for cx, cy in eye_centers:
+                        landmarks.append({
+                            'x': float((cx - x) / fw) if fw > 0 else 0.5,
+                            'y': float((cy - y) / fh) if fh > 0 else 0.5,
+                            'visibility': 1.0,
+                        })
+                    
+                    analysis = _compute_mesh_orientation(face_data['landmarks'], face_data['face_box'], (w, h))
+                else:
+                    landmarks = [{
+                        'x': 0.5,
+                        'y': 0.5,
+                        'visibility': 1.0,
+                    }]
+                    analysis = {
+                        'message': 'Rostro detectado sin análisis completo',
+                        'orientation': 'desconocida',
+                        'distracted': False,
+                        'face_center_norm': (0.5, 0.5),
+                        'face_size_ratio': fw / w,
+                        'attention_score': 0.5,
+                        'confidence': 0.6,
+                    }
+                
+                detected_people.append({
+                    'status': 'success',
+                    'person_detected': True,
+                    'landmarks': landmarks,
+                    'message': analysis['message'],
+                    'head_orientation': analysis['orientation'],
+                    'distracted': analysis['distracted'],
+                    'eyes_detected': len(landmarks) - 1,
+                    'face_box': {'x': int(x), 'y': int(y), 'w': int(fw), 'h': int(fh)},
+                    'face_center': {
+                        'x': float(analysis['face_center_norm'][0]),
+                        'y': float(analysis['face_center_norm'][1]),
+                    },
+                    'face_size_ratio': float(analysis['face_size_ratio']),
+                    'attention_score': float(analysis['attention_score']),
+                    'confidence': float(analysis['confidence']),
+                })
+        
+        # Si no se detectó con MediaPipe, usar OpenCV Cascades
+        if not detected_people:
             gray = cv2.cvtColor(image_array, cv2.COLOR_RGB2GRAY)
             face_cascade, profile_cascade, eye_cascade, eye_tree_cascade = _load_cascades()
+            
+            # Detectar caras de frente
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(140, 140))
             if len(faces) == 0:
+                # Intentar detectar perfiles
                 faces = profile_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=6, minSize=(140, 140))
-
+            
             if len(faces) == 0:
                 return Response({
                     'status': 'success',
@@ -375,26 +435,42 @@ def detect_person(request):
                     'attention_score': 0.0,
                     'confidence': 0.0,
                 })
-
-            face = _select_largest_face(faces)
-            x, y, fw, fh = face
-            face_gray = gray[y:y+fh, x:x+fw]
-            eyes = eye_cascade.detectMultiScale(face_gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
-            if len(eyes) < 2:
-                alt_eyes = eye_tree_cascade.detectMultiScale(face_gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
-                if len(alt_eyes) > len(eyes):
-                    eyes = alt_eyes
-            analysis = _analyze_face_attention(face, eyes, (w, h))
-
-            valid_face, invalid_reason = _validate_face_detection(face, eyes, analysis['face_size_ratio'], analysis['face_center_norm'])
-            if not valid_face:
-                return Response({
+            
+            # Procesar todas las caras detectadas (hasta 5)
+            for face in faces[:5]:
+                x, y, fw, fh = face
+                face_gray = gray[y:y+fh, x:x+fw]
+                
+                # Detectar ojos
+                eyes = eye_cascade.detectMultiScale(face_gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
+                if len(eyes) < 2:
+                    alt_eyes = eye_tree_cascade.detectMultiScale(face_gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
+                    if len(alt_eyes) > len(eyes):
+                        eyes = alt_eyes
+                
+                analysis = _analyze_face_attention(face, eyes, (w, h))
+                valid_face, invalid_reason = _validate_face_detection(
+                    face, eyes, analysis['face_size_ratio'], analysis['face_center_norm']
+                )
+                
+                if not valid_face:
+                    continue
+                
+                landmarks = []
+                for cx, cy in analysis['eye_centers']:
+                    landmarks.append({
+                        'x': float(cx / fw) if fw > 0 else 0.5,
+                        'y': float(cy / fh) if fh > 0 else 0.5,
+                        'visibility': 1.0,
+                    })
+                
+                detected_people.append({
                     'status': 'success',
-                    'person_detected': False,
-                    'landmarks': [],
-                    'message': invalid_reason,
-                    'head_orientation': 'desconocida',
-                    'distracted': True,
+                    'person_detected': True,
+                    'landmarks': landmarks,
+                    'message': analysis['message'],
+                    'head_orientation': analysis['orientation'],
+                    'distracted': analysis['distracted'],
                     'eyes_detected': len(eyes),
                     'face_box': {'x': int(x), 'y': int(y), 'w': int(fw), 'h': int(fh)},
                     'face_center': {
@@ -402,106 +478,28 @@ def detect_person(request):
                         'y': float(analysis['face_center_norm'][1]),
                     },
                     'face_size_ratio': float(analysis['face_size_ratio']),
-                    'attention_score': 0.0,
-                    'confidence': 0.0,
+                    'attention_score': float(analysis['attention_score']),
+                    'confidence': float(analysis['confidence']),
                 })
-
-            landmarks = []
-            for cx, cy in analysis['eye_centers']:
-                landmarks.append({
-                    'x': float(cx / fw),
-                    'y': float(cy / fh),
-                    'visibility': 1.0,
-                })
-            landmarks.append({
-                'x': float((x + fw / 2) / w),
-                'y': float((y + fh / 2) / h),
-                'visibility': 1.0,
-            })
-
+        
+        # Retornar resultados
+        if not detected_people:
             return Response({
                 'status': 'success',
-                'person_detected': True,
-                'landmarks': landmarks,
-                'message': analysis['message'],
-                'head_orientation': analysis['orientation'],
-                'distracted': analysis['distracted'],
-                'eyes_detected': len(eyes),
-                'face_box': {'x': int(x), 'y': int(y), 'w': int(fw), 'h': int(fh)},
-                'face_center': {
-                    'x': float(analysis['face_center_norm'][0]),
-                    'y': float(analysis['face_center_norm'][1]),
-                },
-                'face_size_ratio': float(analysis['face_size_ratio']),
-                'attention_score': float(analysis['attention_score']),
-                'confidence': float(analysis['confidence']),
+                'person_detected': False,
+                'message': 'No se detectaron rostros válidos',
             })
-
-        face_data = faces[0]
-        x, y, fw, fh = face_data['face_box']
-        if face_data.get('landmarks') is None:
-            return Response({
-                'status': 'success',
-                'person_detected': True,
-                'landmarks': [{
-                    'x': float((x + fw / 2) / w),
-                    'y': float((y + fh / 2) / h),
-                    'visibility': 1.0,
-                }],
-                'message': 'Rostro detectado, pero no se pudo procesar la malla de MediaPipe',
-                'head_orientation': 'desconocida',
-                'distracted': False,
-                'eyes_detected': 0,
-                'face_box': {'x': int(x), 'y': int(y), 'w': int(fw), 'h': int(fh)},
-                'face_center': {
-                    'x': float((x + fw / 2) / w),
-                    'y': float((y + fh / 2) / h),
-                },
-                'face_size_ratio': float(fw / w),
-                'attention_score': 0.35,
-                'confidence': 0.45,
-            })
-
-        landmarks = []
-        eye_centers = []
-        for idx in (33, 263):
-            lm = face_data['landmarks'][idx]
-            eye_centers.append((lm.x * w, lm.y * h))
-        for cx, cy in eye_centers:
-            landmarks.append({
-                'x': float((cx - x) / fw),
-                'y': float((cy - y) / fh),
-                'visibility': 1.0,
-            })
-        landmarks.append({
-            'x': float((x + fw / 2) / w),
-            'y': float((y + fh / 2) / h),
-            'visibility': 1.0,
-        })
-
-        analysis = _compute_mesh_orientation(face_data['landmarks'], face_data['face_box'], (w, h))
-
-        return Response({
-            'status': 'success',
-            'person_detected': True,
-            'landmarks': landmarks,
-            'message': analysis['message'],
-            'head_orientation': analysis['orientation'],
-            'distracted': analysis['distracted'],
-            'eyes_detected': len(landmarks) - 1,
-            'face_box': {'x': int(x), 'y': int(y), 'w': int(fw), 'h': int(fh)},
-            'face_center': {
-                'x': float(analysis['face_center_norm'][0]),
-                'y': float(analysis['face_center_norm'][1]),
-            },
-            'face_size_ratio': float(analysis['face_size_ratio']),
-            'attention_score': float(analysis['attention_score']),
-            'confidence': float(analysis['confidence']),
-        })
+        
+        # Retornar como array si hay múltiples personas, sino como objeto único
+        if len(detected_people) == 1:
+            return Response(detected_people[0])
+        else:
+            return Response(detected_people)
+            
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return Response({'error': str(e)}, status=500)
+        return Response({'error': str(e), 'traceback': traceback.format_exc()}, status=500)
 
 
 def _get_dummy_landmarks():

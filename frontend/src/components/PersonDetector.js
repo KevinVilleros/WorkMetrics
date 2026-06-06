@@ -2,17 +2,24 @@ import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { saveAttentionEvent } from '../services/reportService';
 import { API_BASE } from '../services/api';
+import PersonTracker from '../services/trackingService';
 import './PersonDetector.css';
 
 const PersonDetector = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const overlayRef = useRef(null);
+  const trackerRef = useRef(new PersonTracker(5, 5000));
   const [isDetecting, setIsDetecting] = useState(false);
   const [detectionResult, setDetectionResult] = useState(null);
+  const [trackedPersons, setTrackedPersons] = useState([]);
+  const [trackedStats, setTrackedStats] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [stream, setStream] = useState(null);
+  const [fps, setFps] = useState(0);
+  const fpsRef = useRef(0);
+  const lastFrameRef = useRef(Date.now());
 
   const startCamera = async () => {
     try {
@@ -47,10 +54,8 @@ const PersonDetector = () => {
     if (!width || !height) return;
 
     const ctx = canvas.getContext('2d');
-
     canvas.width = width;
     canvas.height = height;
-
     ctx.drawImage(video, 0, 0, width, height);
     const imageData = canvas.toDataURL('image/jpeg', 0.8);
 
@@ -59,17 +64,52 @@ const PersonDetector = () => {
       const response = await axios.post(`${API_BASE}/detect/`, {
         image: imageData
       });
+      
       const result = response.data;
+      
+      // Procesar múltiples detecciones si existen
+      const detections = Array.isArray(result) ? result : [result];
+      
+      // Actualizar tracking
+      const trackingData = trackerRef.current.updateTracking(detections);
+      setTrackedPersons(trackingData.trackedPersons);
+      setTrackedStats(trackerRef.current.getAllStats());
+      
+      // Usar la primera detección para compatibilidad
       setDetectionResult(result);
       setError(null);
 
-      await saveAttentionEvent({
-        person_detected: result.person_detected,
-        head_orientation: result.head_orientation,
-        distracted: result.distracted,
-        eyes_detected: result.eyes_detected,
-        message: result.message,
-      });
+      // Guardar evento de atención para cada persona
+      if (Array.isArray(result)) {
+        result.forEach(async (res) => {
+          await saveAttentionEvent({
+            person_detected: res.person_detected,
+            head_orientation: res.head_orientation,
+            distracted: res.distracted,
+            eyes_detected: res.eyes_detected,
+            message: res.message,
+            attention_score: res.attention_score,
+          });
+        });
+      } else {
+        await saveAttentionEvent({
+          person_detected: result.person_detected,
+          head_orientation: result.head_orientation,
+          distracted: result.distracted,
+          eyes_detected: result.eyes_detected,
+          message: result.message,
+          attention_score: result.attention_score,
+        });
+      }
+
+      // Calcular FPS
+      const now = Date.now();
+      const deltaTime = now - lastFrameRef.current;
+      if (deltaTime > 0) {
+        fpsRef.current = Math.round(1000 / deltaTime);
+        setFps(fpsRef.current);
+      }
+      lastFrameRef.current = now;
     } catch (err) {
       setError('Error en la detección del backend');
       console.error('Error:', err);
@@ -84,8 +124,12 @@ const PersonDetector = () => {
     ctx.clearRect(0, 0, overlayRef.current.width, overlayRef.current.height);
   };
 
-  const drawOverlay = (result) => {
-    if (!videoRef.current || !overlayRef.current || !result) return;
+  const drawOverlay = (trackedPersonsData) => {
+    if (!videoRef.current || !overlayRef.current || !trackedPersonsData || trackedPersonsData.length === 0) {
+      clearOverlay();
+      return;
+    }
+    
     const video = videoRef.current;
     const canvas = overlayRef.current;
     const width = video.videoWidth;
@@ -95,60 +139,82 @@ const PersonDetector = () => {
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext('2d');
-
     ctx.clearRect(0, 0, width, height);
 
-    if (!result.person_detected || !result.face_box) return;
+    // Colores para diferentes IDs de personas
+    const colors = ['#22c55e', '#ef4444', '#3b82f6', '#f59e0b', '#8b5cf6'];
 
-    const { x, y, w, h } = result.face_box;
-    const highlightColor = result.distracted ? '#f97316' : '#22c55e';
+    trackedPersonsData.forEach((person, index) => {
+      const { box, detectionHistory, id, averageAttentionScore } = person;
+      if (!box || !detectionHistory || detectionHistory.length === 0) return;
 
-    ctx.fillStyle = `${highlightColor}33`;
-    ctx.strokeStyle = highlightColor;
-    ctx.lineWidth = 4;
-    ctx.fillRect(x, y, w, h);
-    ctx.strokeRect(x, y, w, h);
+      const lastDetection = detectionHistory[detectionHistory.length - 1];
+      const color = colors[id % colors.length];
+      const highlightColor = lastDetection.distracted ? '#f97316' : color;
 
-    ctx.font = '16px Inter, sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.fillText(`Score: ${(result.attention_score || 0).toFixed(2)}`, x + 10, Math.max(20, y - 10));
+      // Dibujar caja de detección
+      const { x, y, w, h } = box;
+      ctx.fillStyle = `${highlightColor}33`;
+      ctx.strokeStyle = highlightColor;
+      ctx.lineWidth = 3;
+      ctx.fillRect(x, y, w, h);
+      ctx.strokeRect(x, y, w, h);
 
-    const eyePoints = (result.landmarks || []).slice(0, 2).map((lm) => ({
-      x: x + lm.x * w,
-      y: y + lm.y * h,
-    }));
+      // ID de persona
+      ctx.font = 'bold 18px Inter, sans-serif';
+      ctx.fillStyle = highlightColor;
+      ctx.fillText(`Persona #${id}`, x + 10, y - 10);
 
-    eyePoints.forEach((point) => {
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
-      ctx.fillStyle = '#38bdf8';
-      ctx.fill();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
+      // Score de atención y estado
+      ctx.font = '14px Inter, sans-serif';
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(
+        `Atención: ${(averageAttentionScore * 100).toFixed(0)}%`,
+        x + 10,
+        y + h + 20
+      );
+      ctx.fillText(
+        `Frames: ${detectionHistory.length}`,
+        x + 10,
+        y + h + 38
+      );
+
+      // Indicador de estado
+      const statusText = lastDetection.distracted ? '⚠ DISTRAÍDO' : '✓ ATENDIENDO';
+      ctx.fillStyle = lastDetection.distracted ? '#f97316' : '#22c55e';
+      ctx.fillText(statusText, x + 10, y + h + 56);
+
+      // Dibujar histórico de movimiento (trail)
+      if (detectionHistory.length > 1) {
+        ctx.strokeStyle = `${highlightColor}66`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        
+        detectionHistory.slice(-10).forEach((detection, idx) => {
+          if (idx === 0) {
+            ctx.moveTo(x + w / 2, y + h / 2);
+          } else {
+            ctx.lineTo(x + w / 2, y + h / 2);
+          }
+        });
+        ctx.stroke();
+      }
     });
 
-    if (result.face_center) {
-      const centerX = result.face_center.x * width;
-      const centerY = result.face_center.y * height;
-      ctx.strokeStyle = '#facc15';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(centerX - 10, centerY);
-      ctx.lineTo(centerX + 10, centerY);
-      ctx.moveTo(centerX, centerY - 10);
-      ctx.lineTo(centerX, centerY + 10);
-      ctx.stroke();
-    }
+    // Mostrar FPS
+    ctx.font = 'bold 14px Inter, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`FPS: ${fps}`, 10, 25);
+    ctx.fillText(`Personas: ${trackedPersonsData.length}`, 10, 45);
   };
 
   useEffect(() => {
-    if (detectionResult) {
-      drawOverlay(detectionResult);
+    if (trackedPersons && trackedPersons.length > 0) {
+      drawOverlay(trackedPersons);
     } else {
       clearOverlay();
     }
-  }, [detectionResult]);
+  }, [trackedPersons, fps]);
 
   useEffect(() => {
     if (!isDetecting) return;
@@ -250,6 +316,43 @@ const PersonDetector = () => {
                 </ul>
               </div>
             )}
+          </div>
+        )}
+
+        {trackedStats.length > 0 && (
+          <div className="tracking-stats">
+            <h3>📊 Estadísticas de Tracking</h3>
+            <div className="stats-grid">
+              {trackedStats.map((stat) => (
+                <div key={stat.personId} className="stat-card">
+                  <div className="stat-header">Persona #{stat.personId}</div>
+                  <div className="stat-body">
+                    <div className="stat-row">
+                      <span>Frames rastreados:</span>
+                      <strong>{stat.framesTracked}</strong>
+                    </div>
+                    <div className="stat-row">
+                      <span>Atención promedio:</span>
+                      <strong>{(stat.averageAttentionScore * 100).toFixed(1)}%</strong>
+                    </div>
+                    <div className="stat-row">
+                      <span>Máx/Mín:</span>
+                      <strong>
+                        {(stat.maxAttentionScore * 100).toFixed(0)}% / {(stat.minAttentionScore * 100).toFixed(0)}%
+                      </strong>
+                    </div>
+                    <div className="stat-row">
+                      <span>Desatención:</span>
+                      <strong>{stat.distractedPercentage.toFixed(1)}%</strong>
+                    </div>
+                    <div className="stat-row">
+                      <span>Duración:</span>
+                      <strong>{((stat.trackedDuration / 1000).toFixed(1))}s</strong>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

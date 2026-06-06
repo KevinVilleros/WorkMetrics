@@ -215,6 +215,69 @@
   border-bottom: none;
 }
 
+.tracking-stats {
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+}
+
+.tracking-stats h3 {
+  margin: 0 0 18px;
+  color: #0f172a;
+  font-size: 1.1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.1);
+}
+
+.stat-header {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+  padding: 12px 16px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.stat-body {
+  padding: 16px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-row strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
 @media (max-width: 768px) {
   .controls {
     justify-content: center;
@@ -222,5 +285,9 @@
 
   .person-detector h2 {
     font-size: 1.65rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }

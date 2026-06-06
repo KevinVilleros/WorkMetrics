@@ -1,0 +1,94 @@
+# Docker Compose para producción
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: metriclab_db
+    environment:
+      POSTGRES_DB: ${DB_NAME:-metriclab}
+      POSTGRES_USER: ${DB_USER:-metriclab_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-metriclab_secure_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-metriclab_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - metriclab_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: metriclab_redis
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - metriclab_network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    container_name: metriclab_backend
+    environment:
+      DEBUG: ${DEBUG:-False}
+      DATABASE_URL: postgresql://${DB_USER:-metriclab_user}:${DB_PASSWORD:-metriclab_secure_password}@db:5432/${DB_NAME:-metriclab}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,backend}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    networks:
+      - metriclab_network
+    restart: unless-stopped
+
+  frontend:
+    image: node:18-alpine
+    container_name: metriclab_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    environment:
+      REACT_APP_API_URL: http://localhost:8000/api
+    command: >
+      sh -c "npm install && npm run build && npm install -g serve && serve -s build -l 3000"
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    networks:
+      - metriclab_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    container_name: metriclab_nginx
+    volumes:
+      - ./config/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./frontend/build:/usr/share/nginx/html:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - metriclab_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  metriclab_network:
+    driver: bridge

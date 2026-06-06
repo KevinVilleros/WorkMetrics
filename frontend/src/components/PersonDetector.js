@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect } from 'react';
 import axios from 'axios';
 import { saveAttentionEvent } from '../services/reportService';
+import { API_BASE } from '../services/api';
 import './PersonDetector.css';
 
 const PersonDetector = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const overlayRef = useRef(null);
   const [isDetecting, setIsDetecting] = useState(false);
   const [detectionResult, setDetectionResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -40,17 +42,21 @@ const PersonDetector = () => {
 
     const canvas = canvasRef.current;
     const video = videoRef.current;
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    if (!width || !height) return;
+
     const ctx = canvas.getContext('2d');
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = width;
+    canvas.height = height;
 
-    ctx.drawImage(video, 0, 0);
+    ctx.drawImage(video, 0, 0, width, height);
     const imageData = canvas.toDataURL('image/jpeg', 0.8);
 
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/api/detect/', {
+      const response = await axios.post(`${API_BASE}/detect/`, {
         image: imageData
       });
       const result = response.data;
@@ -71,6 +77,78 @@ const PersonDetector = () => {
       setLoading(false);
     }
   };
+
+  const clearOverlay = () => {
+    if (!overlayRef.current) return;
+    const ctx = overlayRef.current.getContext('2d');
+    ctx.clearRect(0, 0, overlayRef.current.width, overlayRef.current.height);
+  };
+
+  const drawOverlay = (result) => {
+    if (!videoRef.current || !overlayRef.current || !result) return;
+    const video = videoRef.current;
+    const canvas = overlayRef.current;
+    const width = video.videoWidth;
+    const height = video.videoHeight;
+    if (!width || !height) return;
+
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (!result.person_detected || !result.face_box) return;
+
+    const { x, y, w, h } = result.face_box;
+    const highlightColor = result.distracted ? '#f97316' : '#22c55e';
+
+    ctx.fillStyle = `${highlightColor}33`;
+    ctx.strokeStyle = highlightColor;
+    ctx.lineWidth = 4;
+    ctx.fillRect(x, y, w, h);
+    ctx.strokeRect(x, y, w, h);
+
+    ctx.font = '16px Inter, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(`Score: ${(result.attention_score || 0).toFixed(2)}`, x + 10, Math.max(20, y - 10));
+
+    const eyePoints = (result.landmarks || []).slice(0, 2).map((lm) => ({
+      x: x + lm.x * w,
+      y: y + lm.y * h,
+    }));
+
+    eyePoints.forEach((point) => {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = '#38bdf8';
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    });
+
+    if (result.face_center) {
+      const centerX = result.face_center.x * width;
+      const centerY = result.face_center.y * height;
+      ctx.strokeStyle = '#facc15';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX - 10, centerY);
+      ctx.lineTo(centerX + 10, centerY);
+      ctx.moveTo(centerX, centerY - 10);
+      ctx.lineTo(centerX, centerY + 10);
+      ctx.stroke();
+    }
+  };
+
+  useEffect(() => {
+    if (detectionResult) {
+      drawOverlay(detectionResult);
+    } else {
+      clearOverlay();
+    }
+  }, [detectionResult]);
 
   useEffect(() => {
     if (!isDetecting) return;
@@ -94,6 +172,7 @@ const PersonDetector = () => {
             playsInline
             className="video-feed"
           />
+          <canvas ref={overlayRef} className="canvas-overlay" />
           <canvas ref={canvasRef} style={{ display: 'none' }} />
         </div>
 
@@ -131,6 +210,29 @@ const PersonDetector = () => {
               <strong>Ojos detectados:</strong>{' '}
               {detectionResult.eyes_detected}
             </p>
+            <div className="graph-panel">
+              <div className="score-label">Nivel de atención</div>
+              <div className="score-bar">
+                <div
+                  className="score-fill"
+                  style={{ width: `${(detectionResult.attention_score ?? 0) * 100}%` }}
+                />
+              </div>
+              <div className="graph-metrics">
+                <div className="metric-pill">
+                  <span>Ojos</span>
+                  <strong>{detectionResult.eyes_detected}</strong>
+                </div>
+                <div className="metric-pill">
+                  <span>Tamaño</span>
+                  <strong>{(detectionResult.face_size_ratio ?? 0).toFixed(2)}</strong>
+                </div>
+                <div className="metric-pill">
+                  <span>Confiabilidad</span>
+                  <strong>{(detectionResult.confidence ?? 0).toFixed(2)}</strong>
+                </div>
+              </div>
+            </div>
             <p className="message">{detectionResult.message}</p>
 
             {detectionResult.person_detected && (

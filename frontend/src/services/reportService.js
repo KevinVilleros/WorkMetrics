@@ -1,6 +1,5 @@
 import axios from 'axios';
-
-const API_BASE = 'http://localhost:8000/api';
+import { API_BASE } from './api';
 
 export const saveAttentionEvent = async (event) => {
   return axios.post(`${API_BASE}/reports/attention/`, event);

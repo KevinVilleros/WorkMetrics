@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import PersonDetector from './components/PersonDetector';
 import ReportView from './components/Reports/ReportView';
+import { API_BASE } from './services/api';
 
 function App() {
   const [status, setStatus] = useState(null);
@@ -9,7 +10,7 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/')
+    fetch(`${API_BASE}/`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Error ${response.status}`);

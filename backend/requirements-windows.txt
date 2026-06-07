@@ -1,0 +1,30 @@
+# Windows development requirements for MetricLab backend
+
+Django==4.2.11
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+django-environ==0.10.0
+django-filter==23.5
+sqlparse==0.4.4
+PyJWT==2.13.0
+djangorestframework-simplejwt==5.5.1
+python-decouple==3.8
+cryptography==41.0.7
+python-dotenv==1.0.0
+requests==2.31.0
+numpy==2.4.6
+opencv-python==4.13.0.92
+Pillow==12.2.0
+mediapipe==0.10.35
+openpyxl==3.1.2
+
+# Optional / development-only packages
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov==4.1.0
+factory-boy==3.3.0
+faker==22.0.0
+flake8==6.1.0
+black==23.12.1
+isort==5.13.2
+mypy==1.7.1

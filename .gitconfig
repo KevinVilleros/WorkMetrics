@@ -1,0 +1,42 @@
+# .gitconfig local para el proyecto
+
+# Configuración de usuario (ejecutar en el repo)
+[user]
+    name = "Tu Nombre"
+    email = "tu.email@example.com"
+
+# Configuración de commit
+[commit]
+    template = .gitmessage
+    gpgsign = false
+
+# Configuración de push
+[push]
+    default = current
+    autoSetupMerge = simple
+
+# Configuración de fetch
+[fetch]
+    prune = true
+
+# Configuración de pull
+[pull]
+    rebase = true
+
+# Configuración de branch
+[branch]
+    autosetuprebase = always
+
+# Alias útiles
+[alias]
+    co = checkout
+    br = branch
+    ci = commit
+    st = status
+    unstage = reset HEAD --
+    last = log -1 HEAD
+    visual = log --graph --oneline --all
+    contributors = shortlog --summary --numbered
+    amend = commit --amend --no-edit
+    undo = reset --soft HEAD~1
+    logs = log --oneline --all --graph --decorate

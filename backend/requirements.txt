@@ -9,7 +9,7 @@ django-filter==23.5
 
 # Database
 psycopg2-binary==2.9.9
-sqlparse==0.4.4
+sqlparse==0.5.5
 
 # Authentication & Security
 PyJWT==2.13.0
